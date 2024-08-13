@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: [-std=c++20, -Wall, -Wextra, -Wshadow, -fdiagnostics-color, -D_GLIBCXX_ASSERTIONS]
