@@ -41,3 +41,24 @@ TEST(LazySegmentTree, Max) {
     EXPECT_EQ(st.get(1), 7);
     EXPECT_EQ(st.get(2), 7);
 }
+
+TEST(LazySegmentTree, Assign) {
+    std::vector<int> a = {2, 4, 6};
+    std::vector<std::optional<int>> b(a.begin(), a.end());
+    LazySegmentTree<std::optional<int>> st(b, {}, [](auto x, auto y) {
+        if (y.has_value())
+            return y;
+        else
+            return x;
+    });
+
+    st.set(0, 2, 3);
+    EXPECT_EQ(st.get(0), std::optional<int>(3));
+    EXPECT_EQ(st.get(1), std::optional<int>(3));
+    EXPECT_EQ(st.get(2), std::optional<int>(6));
+
+    st.set(1, 3, 7);
+    EXPECT_EQ(st.get(0), std::optional<int>(3));
+    EXPECT_EQ(st.get(1), std::optional<int>(7));
+    EXPECT_EQ(st.get(2), std::optional<int>(7));
+}
