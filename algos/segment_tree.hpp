@@ -1,98 +1,105 @@
 #include <bits/stdc++.h>
 
 template <typename T>
+concept IsNode = requires(T t, const T& a, const T& b) {
+    { a + b } -> std::same_as<T>;
+    { T() };
+};
+
+template <typename Node>
+    requires IsNode<Node>
 struct SegmentTree {
-    using F = std::function<T(const T&, const T&)>;
-    using P = std::function<bool(const T&)>;
+    using P = std::function<bool(const Node&)>;
 
     int n;
-    T init;
-    F merge;
-    std::vector<T> tree;
+    std::vector<Node> tree;
 
-    SegmentTree(int n_, T init_, F merge_ = std::plus<>())
-        : n(n_), init(init_), merge(merge_), tree(4 << std::__lg(n), init) {}
+    SegmentTree(int n_) : n(n_), tree(4 << std::__lg(n), Node()) {}
 
-    SegmentTree(std::vector<T> a, T init_, F merge_ = std::plus<>())
-        : SegmentTree(a.size(), init_, merge_) {
-        std::function<void(int, int, int)> build = [&](int node, int l, int r) {
+    SegmentTree(std::vector<Node> a) : SegmentTree(a.size()) {
+        std::function<void(int, int, int)> build = [&](int v, int l, int r) {
             if (l == r - 1) {
-                tree[node] = a[l];
+                tree[v] = a[l];
             } else {
                 int m = (l + r) / 2;
-                build(node * 2, l, m);
-                build(node * 2 + 1, m, r);
-                tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
+                build(v * 2, l, m);
+                build(v * 2 + 1, m, r);
+                tree[v] = tree[v * 2] + tree[v * 2 + 1];
             }
         };
         build(1, 0, n);
     }
 
-    T get(int node, int tl, int tr, int l, int r) {
+    Node get(int v, int tl, int tr, int l, int r) {
         if (l >= tr || r <= tl) {
-            return init;
+            return Node();
         }
         if (tl >= l && tr <= r) {
-            return tree[node];
+            return tree[v];
         }
         int tm = (tl + tr) / 2;
-        return merge(get(node * 2, tl, tm, l, r),
-                     get(node * 2 + 1, tm, tr, l, r));
+        return get(v * 2, tl, tm, l, r) + get(v * 2 + 1, tm, tr, l, r);
     }
 
-    T get(int l, int r) { return get(1, 0, n, l, r); }
+    Node get(int l, int r) { return get(1, 0, n, l, r); }
 
-    void set(int node, int tl, int tr, int pos, T val) {
+    void set(int v, int tl, int tr, int pos, Node val) {
         if (tl == tr - 1) {
-            tree[node] = val;
+            tree[v] = val;
             return;
         }
         int tm = (tl + tr) / 2;
         if (pos < tm) {
-            set(node * 2, tl, tm, pos, val);
+            set(v * 2, tl, tm, pos, val);
         } else {
-            set(node * 2 + 1, tm, tr, pos, val);
+            set(v * 2 + 1, tm, tr, pos, val);
         }
-        tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
+        tree[v] = tree[v * 2] + tree[v * 2 + 1];
     }
 
-    void set(int pos, T val) { set(1, 0, n, pos, val); }
+    void set(int pos, Node val) { set(1, 0, n, pos, val); }
 
-    int find_first(int node, int tl, int tr, int l, int r, P pred) {
-        if (l >= tr || r <= tl || !pred(tree[node])) {
+    int find_first(int v, int tl, int tr, int l, int r, P pred) {
+        if (l >= tr || r <= tl || !pred(tree[v])) {
             return -1;
         }
         if (tl == tr - 1) {
             return tl;
         }
         int tm = (tl + tr) / 2;
-        int pos = find_first(node * 2, tl, tm, l, r, pred);
+        int pos = find_first(v * 2, tl, tm, l, r, pred);
         if (pos != -1) {
             return pos;
         }
-        return find_first(node * 2 + 1, tm, tr, l, r, pred);
+        return find_first(v * 2 + 1, tm, tr, l, r, pred);
     }
 
     int find_first(int l, int r, P pred) {
         return find_first(1, 0, n, l, r, pred);
     }
 
-    int find_last(int node, int tl, int tr, int l, int r, P pred) {
-        if (l >= tr || r <= tl || !pred(tree[node])) {
+    int find_last(int v, int tl, int tr, int l, int r, P pred) {
+        if (l >= tr || r <= tl || !pred(tree[v])) {
             return -1;
         }
         if (tl == tr - 1) {
             return tl;
         }
         int tm = (tl + tr) / 2;
-        int pos = find_last(node * 2 + 1, tm, tr, l, r, pred);
+        int pos = find_last(v * 2 + 1, tm, tr, l, r, pred);
         if (pos != -1) {
             return pos;
         }
-        return find_last(node * 2, tl, tm, l, r, pred);
+        return find_last(v * 2, tl, tm, l, r, pred);
     }
 
     int find_last(int l, int r, P pred) {
         return find_last(1, 0, n, l, r, pred);
+    }
+};
+
+struct Node {
+    friend Node operator+(const Node& lhs, const Node& rhs) {
+        std::logic_error("Not Implemented");
     }
 };
