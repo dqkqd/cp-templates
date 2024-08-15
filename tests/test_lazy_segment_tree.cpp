@@ -12,53 +12,66 @@ bool operator==(const TestLazySegmentTreeStruct& lhs,
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
-TEST(LazySegmentTree, Sum) {
-    std::vector<int> a = {2, 4, 6};
-    LazySegmentTree<int> st(a, 0);
+struct OpA {
+    int value = 0;
+    void apply(const OpA& op) { value += op.value; }
+};
 
-    st.set(0, 3, 5);
-    EXPECT_EQ(st.get(0), 7);
-    EXPECT_EQ(st.get(1), 9);
-    EXPECT_EQ(st.get(2), 11);
+struct NodeA {
+    int value = 0;
+    void apply(const OpA& op) { value += op.value; }
+    friend NodeA operator+(const NodeA& lhs, const NodeA& rhs) {
+        return NodeA{std::max(lhs.value, rhs.value)};
+    }
+};
 
-    st.set(1, 3, 1);
-    EXPECT_EQ(st.get(0), 7);
-    EXPECT_EQ(st.get(1), 10);
-    EXPECT_EQ(st.get(2), 12);
+TEST(LazySegmentTree, SumAndMax) {
+    std::vector<NodeA> a = {NodeA{2}, NodeA{4}, NodeA{6}};
+    LazySegmentTree<NodeA, OpA> st(a);
+
+    st.set(0, 3, OpA{5});
+    EXPECT_EQ(st.get(0, 1).value, 7);
+    EXPECT_EQ(st.get(0, 2).value, 9);
+    EXPECT_EQ(st.get(0, 3).value, 11);
+
+    st.set(1, 3, OpA{1});
+    EXPECT_EQ(st.get(0, 1).value, 7);
+    EXPECT_EQ(st.get(1, 2).value, 10);
+    EXPECT_EQ(st.get(1, 3).value, 12);
 }
 
-TEST(LazySegmentTree, Max) {
-    std::vector<int> a = {2, 4, 6};
-    LazySegmentTree<int> st(a, 0, [](int x, int y) { return std::max(x, y); });
+struct OpB {
+    std::optional<int> value = {};
+    void apply(const OpB& op) {
+        if (op.value.has_value()) {
+            value = op.value;
+        }
+    }
+};
 
-    st.set(0, 3, 3);
-    EXPECT_EQ(st.get(0), 3);
-    EXPECT_EQ(st.get(1), 4);
-    EXPECT_EQ(st.get(2), 6);
+struct NodeB {
+    int value = 0;
+    void apply(const OpB& op) {
+        if (op.value.has_value()) {
+            value = op.value.value();
+        }
+    }
+    friend NodeB operator+(const NodeB& lhs, const NodeB& rhs) {
+        return NodeB{std::max(lhs.value, rhs.value)};
+    }
+};
 
-    st.set(1, 3, 7);
-    EXPECT_EQ(st.get(0), 3);
-    EXPECT_EQ(st.get(1), 7);
-    EXPECT_EQ(st.get(2), 7);
-}
+TEST(LazySegmentTree, AssignAndMax) {
+    std::vector<NodeB> a = {NodeB{2}, NodeB{4}, NodeB{6}};
+    LazySegmentTree<NodeB, OpB> st(a);
 
-TEST(LazySegmentTree, Assign) {
-    std::vector<int> a = {2, 4, 6};
-    std::vector<std::optional<int>> b(a.begin(), a.end());
-    LazySegmentTree<std::optional<int>> st(b, {}, [](auto x, auto y) {
-        if (y.has_value())
-            return y;
-        else
-            return x;
-    });
+    st.set(0, 2, OpB{3});
+    EXPECT_EQ(st.get(0, 1).value, 3);
+    EXPECT_EQ(st.get(0, 2).value, 3);
+    EXPECT_EQ(st.get(0, 3).value, 6);
 
-    st.set(0, 2, 3);
-    EXPECT_EQ(st.get(0), std::optional<int>(3));
-    EXPECT_EQ(st.get(1), std::optional<int>(3));
-    EXPECT_EQ(st.get(2), std::optional<int>(6));
-
-    st.set(1, 3, 7);
-    EXPECT_EQ(st.get(0), std::optional<int>(3));
-    EXPECT_EQ(st.get(1), std::optional<int>(7));
-    EXPECT_EQ(st.get(2), std::optional<int>(7));
+    st.set(1, 3, OpB{1});
+    EXPECT_EQ(st.get(0, 1).value, 3);
+    EXPECT_EQ(st.get(1, 2).value, 1);
+    EXPECT_EQ(st.get(1, 3).value, 1);
 }

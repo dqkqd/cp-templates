@@ -1,75 +1,94 @@
 #include <bits/stdc++.h>
 
 template <typename T>
+concept IsOp = requires(T t, const T& o) {
+    { t.apply(o) } -> std::same_as<void>;
+    { T() };
+};
+
+template <typename T, typename U>
+concept IsNode = requires(T t, const T& a, const T& b, const U& o) {
+    { t.apply(o) } -> std::same_as<void>;
+    { a + b } -> std::same_as<T>;
+    { T() };
+};
+
+template <typename Node, typename Op>
+    requires IsOp<Op> && IsNode<Node, Op>
 struct LazySegmentTree {
-    using F = std::function<T(const T&, const T&)>;
-
     int n;
-    T init;
-    F merge;
-    std::vector<T> tree;
-    std::vector<bool> mark;
+    std::vector<Node> tree;
+    std::vector<Op> lazy;
 
-    LazySegmentTree(int n_, T init_, F merge_ = std::plus<>())
+    LazySegmentTree(int n_)
         : n(n_),
-          init(init_),
-          merge(merge_),
-          tree(4 << std::__lg(n), init),
-          mark(4 << std::__lg(n), false) {}
+          tree(4 << std::__lg(n), Node()),
+          lazy(4 << std::__lg(n), Op()) {}
 
-    LazySegmentTree(std::vector<T> a, T init_, F merge_ = std::plus<>())
-        : LazySegmentTree(a.size(), init_, merge_) {
-        std::function<void(int, int, int)> build = [&](int node, int l, int r) {
+    LazySegmentTree(std::vector<Node> a) : LazySegmentTree(a.size()) {
+        std::function<void(int, int, int)> build = [&](int v, int l, int r) {
             if (l == r - 1) {
-                tree[node] = a[l];
+                tree[v] = a[l];
             } else {
                 int m = (l + r) / 2;
-                build(node * 2, l, m);
-                build(node * 2 + 1, m, r);
-                tree[node] = init;
+                build(v * 2, l, m);
+                build(v * 2 + 1, m, r);
+                tree[v] = tree[v * 2] + tree[v * 2 + 1];
             }
         };
         build(1, 0, n);
     }
 
-    void push(int node) {
-        if (mark[node]) {
-            tree[node * 2] = merge(tree[node * 2], tree[node]);
-            tree[node * 2 + 1] = merge(tree[node * 2 + 1], tree[node]);
-            mark[node * 2] = mark[node * 2 + 1] = true;
-            mark[node] = false;
-            tree[node] = init;
-        }
+    void apply(int v, const Op& op) {
+        tree[v].apply(op);
+        lazy[v].apply(op);
     }
 
-    T get(int node, int tl, int tr, int pos) {
-        if (tl == tr - 1) {
-            return tree[node];
+    void push(int v) {
+        apply(v * 2, lazy[v]);
+        apply(v * 2 + 1, lazy[v]);
+        lazy[v] = Op();
+    }
+
+    Node get(int v, int tl, int tr, int l, int r) {
+        if (l >= tr || r <= tl) {
+            return Node();
         }
-        push(node);
+        if (tl >= l && tr <= r) {
+            return tree[v];
+        }
+        push(v);
         int tm = (tl + tr) / 2;
-        if (pos < tm) {
-            return merge(get(node * 2, tl, tm, pos), tree[node]);
-        }
-        return merge(get(node * 2 + 1, tm, tr, pos), tree[node]);
+        return get(v * 2, tl, tm, l, r) + get(v * 2 + 1, tm, tr, l, r);
     }
 
-    T get(int pos) { return get(1, 0, n, pos); }
+    Node get(int l, int r) { return get(1, 0, n, l, r); }
 
-    void set(int node, int tl, int tr, int l, int r, T val) {
+    void set(int v, int tl, int tr, int l, int r, const Op& op) {
         if (l >= tr || r <= tl) {
             return;
         }
         if (tl >= l && tr <= r) {
-            tree[node] = merge(tree[node], val);
-            mark[node] = true;
+            apply(v, op);
             return;
         }
-        push(node);
+        push(v);
         int tm = (tl + tr) / 2;
-        set(node * 2, tl, tm, l, r, val);
-        set(node * 2 + 1, tm, tr, l, r, val);
+        set(v * 2, tl, tm, l, r, op);
+        set(v * 2 + 1, tm, tr, l, r, op);
+        tree[v] = tree[v * 2] + tree[v * 2 + 1];
     }
 
-    void set(int l, int r, T val) { set(1, 0, n, l, r, val); }
+    void set(int l, int r, const Op& op) { set(1, 0, n, l, r, op); }
+};
+
+struct Op {
+    void apply(const Op& op) { std::logic_error("Not Implemented"); }
+};
+
+struct Node {
+    void apply(const Op& op) { std::logic_error("Not Implemented"); }
+    friend Node operator+(const Node& lhs, const Node& rhs) {
+        std::logic_error("Not Implemented");
+    }
 };
