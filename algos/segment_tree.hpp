@@ -1,4 +1,7 @@
-#include <bits/stdc++.h>
+#include <concepts>
+#include <functional>
+#include <stdexcept>
+#include <vector>
 
 template <typename T>
 concept DefaultConstructible = requires { T{}; };
