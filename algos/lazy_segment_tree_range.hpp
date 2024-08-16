@@ -1,21 +1,23 @@
 #include <bits/stdc++.h>
 
 template <typename T>
-concept IsOp = requires(T t, const T& o) {
+concept DefaultConstructible = requires { T{}; };
+template <typename T, typename U>
+concept Applicable = requires(T t, const U& o) {
     { t.apply(o) } -> std::same_as<void>;
-    { T() };
+};
+template <typename T, typename U>
+concept ApplicableRange = requires(T t, const U& o, int l, int r) {
+    { t.apply(o, l, r) } -> std::same_as<void>;
+};
+template <typename T>
+concept Addable = requires(const T& a, const T& b) {
+    { a + b } -> std::same_as<T>;
 };
 
-template <typename T, typename U>
-concept IsNode =
-    requires(T t, const T& a, const T& b, const U& o, int l, int r) {
-        { t.apply(o, l, r) } -> std::same_as<void>;
-        { a + b } -> std::same_as<T>;
-        { T() };
-    };
-
 template <typename Node, typename Op>
-    requires IsOp<Op> && IsNode<Node, Op>
+    requires DefaultConstructible<Node> && DefaultConstructible<Op> &&
+             Applicable<Op, Op> && ApplicableRange<Node, Op> && Addable<Node>
 struct LazySegmentTree {
     int n;
     std::vector<Node> tree;

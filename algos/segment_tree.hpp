@@ -1,13 +1,14 @@
 #include <bits/stdc++.h>
 
 template <typename T>
-concept IsNode = requires(T t, const T& a, const T& b) {
+concept DefaultConstructible = requires { T{}; };
+template <typename T>
+concept Addable = requires(const T& a, const T& b) {
     { a + b } -> std::same_as<T>;
-    { T() };
 };
 
 template <typename Node>
-    requires IsNode<Node>
+    requires DefaultConstructible<Node> && Addable<Node>
 struct SegmentTree {
     using P = std::function<bool(const Node&)>;
 
