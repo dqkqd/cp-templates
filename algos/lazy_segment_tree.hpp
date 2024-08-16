@@ -83,12 +83,17 @@ struct LazySegmentTree {
 };
 
 struct Op {
-    void apply(const Op& op) { std::logic_error("Not Implemented"); }
+    void apply([[maybe_unused]] const Op& op) {
+        throw std::logic_error("Not Implemented");
+    }
 };
 
 struct Node {
-    void apply(const Op& op) { std::logic_error("Not Implemented"); }
-    friend Node operator+(const Node& lhs, const Node& rhs) {
-        std::logic_error("Not Implemented");
+    void apply([[maybe_unused]] const Op& op) {
+        throw std::logic_error("Not Implemented");
+    }
+    friend Node operator+([[maybe_unused]] const Node& lhs,
+                          [[maybe_unused]] const Node& rhs) {
+        throw std::logic_error("Not Implemented");
     }
 };

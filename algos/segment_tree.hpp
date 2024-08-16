@@ -99,7 +99,8 @@ struct SegmentTree {
 };
 
 struct Node {
-    friend Node operator+(const Node& lhs, const Node& rhs) {
-        std::logic_error("Not Implemented");
+    friend Node operator+([[maybe_unused]] const Node& lhs,
+                          [[maybe_unused]] const Node& rhs) {
+        throw std::logic_error("Not Implemented");
     }
 };
