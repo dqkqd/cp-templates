@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 
+/* debug template start */
 auto _format(auto v) { return std::format("{}", v); }
 template <typename T1, typename T2>
 auto _format(std::pair<T1, T2> p) {
@@ -38,6 +39,7 @@ void debug_print(H h, T... t) {
 #define dbgend()
 #endif
 // clang-format on
+/* debug template end */
 
 void solve() {}
 
