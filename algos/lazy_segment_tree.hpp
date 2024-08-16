@@ -15,6 +15,8 @@ template <typename Node, typename Op>
     requires DefaultConstructible<Node> && DefaultConstructible<Op> &&
              Applicable<Op, Op> && Applicable<Node, Op> && Addable<Node>
 struct LazySegmentTree {
+    using P = std::function<bool(const Node&)>;
+
     int n;
     std::vector<Node> tree;
     std::vector<Op> lazy;
@@ -79,6 +81,46 @@ struct LazySegmentTree {
     }
 
     void set(int l, int r, const Op& op) { set(1, 0, n, l, r, op); }
+
+    int find_first(int v, int tl, int tr, int l, int r, P pred) {
+        if (l >= tr || r <= tl || !pred(tree[v])) {
+            return -1;
+        }
+        if (tl == tr - 1) {
+            return tl;
+        }
+        push(v);
+        int tm = (tl + tr) / 2;
+        int pos = find_first(v * 2, tl, tm, l, r, pred);
+        if (pos != -1) {
+            return pos;
+        }
+        return find_first(v * 2 + 1, tm, tr, l, r, pred);
+    }
+
+    int find_first(int l, int r, P pred) {
+        return find_first(1, 0, n, l, r, pred);
+    }
+
+    int find_last(int v, int tl, int tr, int l, int r, P pred) {
+        if (l >= tr || r <= tl || !pred(tree[v])) {
+            return -1;
+        }
+        if (tl == tr - 1) {
+            return tl;
+        }
+        push(v);
+        int tm = (tl + tr) / 2;
+        int pos = find_last(v * 2 + 1, tm, tr, l, r, pred);
+        if (pos != -1) {
+            return pos;
+        }
+        return find_last(v * 2, tl, tm, l, r, pred);
+    }
+
+    int find_last(int l, int r, P pred) {
+        return find_last(1, 0, n, l, r, pred);
+    }
 };
 
 struct Op {
