@@ -4,12 +4,19 @@
 
 struct OpRA {
     int value = 0;
-    void apply(const OpRA& op) { value += op.value; }
+
+    void apply(const OpRA& op) {
+        value += op.value;
+    }
 };
 
 struct NodeRA {
     int value = 0;
-    void apply(const OpRA& op, int l, int r) { value += op.value * (r - l); }
+
+    void apply(const OpRA& op, int l, int r) {
+        value += op.value * (r - l);
+    }
+
     friend NodeRA operator+(const NodeRA& lhs, const NodeRA& rhs) {
         return NodeRA{lhs.value + rhs.value};
     }
@@ -32,6 +39,7 @@ TEST(LazySegmentTreeRange, AddAndSum) {
 
 struct OpRB {
     std::optional<int> value = {};
+
     void apply(const OpRB& op) {
         if (op.value.has_value()) {
             value = op.value;
@@ -41,11 +49,13 @@ struct OpRB {
 
 struct NodeRB {
     int value = 0;
+
     void apply(const OpRB& op, int l, int r) {
         if (op.value.has_value()) {
             value = op.value.value() * (r - l);
         }
     }
+
     friend NodeRB operator+(const NodeRB& lhs, const NodeRB& rhs) {
         return NodeRB{lhs.value + rhs.value};
     }

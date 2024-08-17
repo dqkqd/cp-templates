@@ -4,6 +4,7 @@
 
 struct StSum {
     int value = 0;
+
     friend StSum operator+(const StSum& lhs, const StSum& rhs) {
         return StSum{lhs.value + rhs.value};
     }
@@ -46,9 +47,11 @@ TEST(SegmentTree, Sum) {
 
 struct StBStMin {
     int value = 10;
+
     friend StBStMin operator+(const StBStMin& lhs, const StBStMin& rhs) {
         return StBStMin{std::min(lhs.value, rhs.value)};
     }
+
     friend bool operator==(const StBStMin& lhs, const StBStMin& rhs) {
         return lhs.value == rhs.value;
     }
@@ -95,6 +98,7 @@ TEST(SegmentTree, Min) {
 struct StMaxAndCount {
     int max = -1;
     int count = -1;
+
     friend StMaxAndCount operator+(const StMaxAndCount& lhs,
                                    const StMaxAndCount& rhs) {
         if (lhs.max > rhs.max) {
@@ -105,6 +109,7 @@ struct StMaxAndCount {
         }
         return StMaxAndCount{lhs.max, lhs.count + rhs.count};
     }
+
     friend bool operator==(const StMaxAndCount& lhs, const StMaxAndCount& rhs) {
         return lhs.max == rhs.max && lhs.count == rhs.count;
     }

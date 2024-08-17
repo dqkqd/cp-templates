@@ -14,12 +14,19 @@ bool operator==(const TestLazySegmentTreeStruct& lhs,
 
 struct OpA {
     int value = 0;
-    void apply(const OpA& op) { value += op.value; }
+
+    void apply(const OpA& op) {
+        value += op.value;
+    }
 };
 
 struct NodeA {
     int value = 0;
-    void apply(const OpA& op) { value += op.value; }
+
+    void apply(const OpA& op) {
+        value += op.value;
+    }
+
     friend NodeA operator+(const NodeA& lhs, const NodeA& rhs) {
         return NodeA{std::max(lhs.value, rhs.value)};
     }
@@ -42,6 +49,7 @@ TEST(LazySegmentTree, SumAndMax) {
 
 struct OpB {
     std::optional<int> value = {};
+
     void apply(const OpB& op) {
         if (op.value.has_value()) {
             value = op.value;
@@ -51,11 +59,13 @@ struct OpB {
 
 struct NodeB {
     int value = 0;
+
     void apply(const OpB& op) {
         if (op.value.has_value()) {
             value = op.value.value();
         }
     }
+
     friend NodeB operator+(const NodeB& lhs, const NodeB& rhs) {
         return NodeB{std::max(lhs.value, rhs.value)};
     }
@@ -78,6 +88,7 @@ TEST(LazySegmentTree, AssignAndMax) {
 
 struct OpC {
     std::optional<int> value = {};
+
     void apply(const OpC& op) {
         if (op.value.has_value()) {
             value = op.value;
@@ -87,11 +98,13 @@ struct OpC {
 
 struct NodeC {
     int value = 0;
+
     void apply(const OpC& op) {
         if (op.value.has_value()) {
             value = op.value.value();
         }
     }
+
     friend NodeC operator+(const NodeC& lhs, const NodeC& rhs) {
         return NodeC{std::max(lhs.value, rhs.value)};
     }

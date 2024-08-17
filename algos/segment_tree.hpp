@@ -45,7 +45,9 @@ struct SegmentTree {
         return get(v * 2, tl, tm, l, r) + get(v * 2 + 1, tm, tr, l, r);
     }
 
-    Node get(int l, int r) { return get(1, 0, n, l, r); }
+    Node get(int l, int r) {
+        return get(1, 0, n, l, r);
+    }
 
     void set(int v, int tl, int tr, int pos, Node val) {
         if (tl == tr - 1) {
@@ -61,7 +63,9 @@ struct SegmentTree {
         tree[v] = tree[v * 2] + tree[v * 2 + 1];
     }
 
-    void set(int pos, Node val) { set(1, 0, n, pos, val); }
+    void set(int pos, Node val) {
+        set(1, 0, n, pos, val);
+    }
 
     int find_first(int v, int tl, int tr, int l, int r, P pred) {
         if (l >= tr || r <= tl || !pred(tree[v])) {

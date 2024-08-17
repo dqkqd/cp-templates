@@ -69,7 +69,9 @@ struct LazySegmentTree {
         return get(v * 2, tl, tm, l, r) + get(v * 2 + 1, tm, tr, l, r);
     }
 
-    Node get(int l, int r) { return get(1, 0, n, l, r); }
+    Node get(int l, int r) {
+        return get(1, 0, n, l, r);
+    }
 
     void set(int v, int tl, int tr, int l, int r, const Op& op) {
         if (l >= tr || r <= tl) {
@@ -86,7 +88,9 @@ struct LazySegmentTree {
         tree[v] = tree[v * 2] + tree[v * 2 + 1];
     }
 
-    void set(int l, int r, const Op& op) { set(1, 0, n, l, r, op); }
+    void set(int l, int r, const Op& op) {
+        set(1, 0, n, l, r, op);
+    }
 };
 
 struct Op {
@@ -100,6 +104,7 @@ struct Node {
                [[maybe_unused]] int r) {
         throw std::logic_error("Not Implemented");
     }
+
     friend Node operator+([[maybe_unused]] const Node& lhs,
                           [[maybe_unused]] const Node& rhs) {
         throw std::logic_error("Not Implemented");
