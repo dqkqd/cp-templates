@@ -10,7 +10,7 @@ concept Sub = requires(const T& a, const T& b) {
 };
 
 template <typename T>
-    requires Add<T> && Sub<T>
+    requires Add<T> && Sub<T> && std::default_initializable<T>
 struct FenwickTree {
     int n;
     std::vector<T> bit;

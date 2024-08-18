@@ -3,8 +3,6 @@
 #include <stdexcept>
 #include <vector>
 
-template <typename T>
-concept Default = requires { T{}; };
 template <typename T, typename U>
 concept Apply = requires(T t, const U& o) {
     { t.apply(o) } -> std::same_as<void>;
@@ -15,8 +13,8 @@ concept Add = requires(const T& a, const T& b) {
 };
 
 template <typename Node, typename Op>
-    requires Default<Node> && Default<Op> &&
-             Apply<Op, Op> && Apply<Node, Op> && Add<Node>
+    requires Apply<Op, Op> && Apply<Node, Op> && Add<Node> &&
+             std::default_initializable<Node> && std::default_initializable<Op>
 struct LazySegmentTree {
     using P = std::function<bool(const Node&)>;
 
