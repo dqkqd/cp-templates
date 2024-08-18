@@ -4,19 +4,19 @@
 #include <vector>
 
 template <typename T>
-concept DefaultConstructible = requires { T{}; };
+concept Default = requires { T{}; };
 template <typename T, typename U>
-concept Applicable = requires(T t, const U& o) {
+concept Apply = requires(T t, const U& o) {
     { t.apply(o) } -> std::same_as<void>;
 };
 template <typename T>
-concept Addable = requires(const T& a, const T& b) {
+concept Add = requires(const T& a, const T& b) {
     { a + b } -> std::same_as<T>;
 };
 
 template <typename Node, typename Op>
-    requires DefaultConstructible<Node> && DefaultConstructible<Op> &&
-             Applicable<Op, Op> && Applicable<Node, Op> && Addable<Node>
+    requires Default<Node> && Default<Op> &&
+             Apply<Op, Op> && Apply<Node, Op> && Add<Node>
 struct LazySegmentTree {
     using P = std::function<bool(const Node&)>;
 

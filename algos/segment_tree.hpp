@@ -4,14 +4,14 @@
 #include <vector>
 
 template <typename T>
-concept DefaultConstructible = requires { T{}; };
+concept Default = requires { T{}; };
 template <typename T>
-concept Addable = requires(const T& a, const T& b) {
+concept Add = requires(const T& a, const T& b) {
     { a + b } -> std::same_as<T>;
 };
 
 template <typename Node>
-    requires DefaultConstructible<Node> && Addable<Node>
+    requires Default<Node> && Add<Node>
 struct SegmentTree {
     using P = std::function<bool(const Node&)>;
 
