@@ -15,17 +15,13 @@ bool operator==(const TestLazySegmentTreeStruct& lhs,
 struct OpA {
     int value = 0;
 
-    void apply(const OpA& op) {
-        value += op.value;
-    }
+    void apply(const OpA& op) { value += op.value; }
 };
 
 struct NodeA {
     int value = 0;
 
-    void apply(const OpA& op) {
-        value += op.value;
-    }
+    void apply(const OpA& op) { value += op.value; }
 
     friend NodeA operator+(const NodeA& lhs, const NodeA& rhs) {
         return NodeA{std::max(lhs.value, rhs.value)};

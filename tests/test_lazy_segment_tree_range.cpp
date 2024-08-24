@@ -5,17 +5,13 @@
 struct OpRA {
     int value = 0;
 
-    void apply(const OpRA& op) {
-        value += op.value;
-    }
+    void apply(const OpRA& op) { value += op.value; }
 };
 
 struct NodeRA {
     int value = 0;
 
-    void apply(const OpRA& op, int l, int r) {
-        value += op.value * (r - l);
-    }
+    void apply(const OpRA& op, int l, int r) { value += op.value * (r - l); }
 
     friend NodeRA operator+(const NodeRA& lhs, const NodeRA& rhs) {
         return NodeRA{lhs.value + rhs.value};

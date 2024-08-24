@@ -35,9 +35,7 @@ struct FenwickTree {
         return res;
     }
 
-    T sum(int l, int r) {
-        return sum(r) - sum(l);
-    }
+    T sum(int l, int r) { return sum(r) - sum(l); }
 
     void add(int idx, T delta) {
         for (++idx; idx < n; idx += idx & -idx) {

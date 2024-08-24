@@ -64,9 +64,7 @@ struct LazySegmentTree {
         return get(v * 2, tl, tm, l, r) + get(v * 2 + 1, tm, tr, l, r);
     }
 
-    Node get(int l, int r) {
-        return get(1, 0, n, l, r);
-    }
+    Node get(int l, int r) { return get(1, 0, n, l, r); }
 
     void set(int v, int tl, int tr, int l, int r, const Op& op) {
         if (l >= tr || r <= tl) {
@@ -83,9 +81,7 @@ struct LazySegmentTree {
         tree[v] = tree[v * 2] + tree[v * 2 + 1];
     }
 
-    void set(int l, int r, const Op& op) {
-        set(1, 0, n, l, r, op);
-    }
+    void set(int l, int r, const Op& op) { set(1, 0, n, l, r, op); }
 
     int find_first(int v, int tl, int tr, int l, int r, P pred) {
         if (l >= tr || r <= tl || !pred(tree[v])) {

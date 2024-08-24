@@ -5,10 +5,6 @@ IndentWidth: 4
 AccessModifierOffset: -4
 ColumnLimit: 80
 MaxEmptyLinesToKeep: 1
-AllowShortBlocksOnASingleLine: "Empty"
-AllowShortFunctionsOnASingleLine: "Empty"
-AllowShortIfStatementsOnASingleLine: "Never"
-InsertBraces: true
 SeparateDefinitionBlocks: "Always"
 KeepEmptyLinesAtEOF: true
 KeepEmptyLinesAtTheStartOfBlocks: false
