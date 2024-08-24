@@ -15,11 +15,11 @@ enable_testing()
 
 add_executable(
   test_algos
-  test_segment_tree.cpp
+  test_fenwick_tree.cpp
   test_lazy_segment_tree.cpp
   test_lazy_segment_tree_range.cpp
   test_rmp.cpp
-  test_fenwick_tree.cpp
+  test_segment_tree.cpp
 )
 
 target_include_directories(test_algos PRIVATE ${PROJECT_SOURCE_DIR}/algos)
