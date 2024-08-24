@@ -18,6 +18,7 @@ add_executable(
   test_fenwick_tree.cpp
   test_lazy_segment_tree.cpp
   test_lazy_segment_tree_range.cpp
+  test_modint.cpp
   test_rmp.cpp
   test_segment_tree.cpp
 )
