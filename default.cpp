@@ -1,45 +1,42 @@
 #include <bits/stdc++.h>
 
 /* debug template start */
-auto _format(auto v) {
+template <typename T>
+concept Container = requires(T t) {
+    { t.begin() } -> std::same_as<typename T::iterator>;
+    { t.end() } -> std::same_as<typename T::iterator>;
+};
+
+template <typename T>
+concept Formattable = requires(T t) {
+    { std::format("{}", t) };
+};
+
+template <typename T>
+    requires Formattable<T> && (!Container<T>)
+std::string _format(const T& v) {
     return std::format("{}", v);
 }
 
 template <typename T1, typename T2>
-auto _format(std::pair<T1, T2> p) {
+std::string _format(std::pair<T1, T2> p) {
     return std::format("({},{})", _format(p.first), _format(p.second));
 }
 
-auto _format(bool v) {
-    return v ? "t" : "f";
-}
-
-auto _format(std::vector<bool> v) {
-    std::string s;
-    for (size_t i = 0; i < v.size(); ++i) {
-        if (i) {
-            s += ", ";
-        }
-        s += v[i] ? "t" : "f";
-    }
-    return std::format("[{}]", s);
-}
-
 template <typename T>
-auto _format(std::vector<T>& v) {
+    requires Container<T>
+std::string _format(const T& v) {
     std::string s;
-    for (size_t i = 0; i < v.size(); ++i) {
-        if (i) {
+    for (auto it = v.begin(); it != v.end(); ++it) {
+        s += _format(*it);
+        if (it != std::prev(v.end())) {
             s += ", ";
         }
-        s += _format(v[i]);
     }
     return std::format("[{}]", s);
 }
 
-void debug_print() {
-    std::cerr << std::endl;
-}
+void debug_print() { std::cerr << std::endl; }
 
 template <typename H, typename... T>
 void debug_print(H h, T... t) {
