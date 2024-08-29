@@ -23,6 +23,19 @@ std::string _format(std::pair<T1, T2> p) {
     return std::format("({},{})", _format(p.first), _format(p.second));
 }
 
+template <typename K, typename V>
+std::string _format(const std::map<K, V>& m) {
+    std::string s;
+    for (auto it = m.begin(); it != m.end(); ++it) {
+        auto [k, v] = *it;
+        s += std::format("{} : {}", _format(k), _format(v));
+        if (it != std::prev(m.end())) {
+            s += ", ";
+        }
+    }
+    return std::format("{{{}}}", s);
+}
+
 template <typename T>
     requires Container<T>
 std::string _format(const T& v) {
