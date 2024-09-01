@@ -39,11 +39,20 @@ std::string _format(const std::map<K, V>& m) {
 template <typename T>
     requires Container<T>
 std::string _format(const T& v) {
+    using IterType = std::iterator_traits<decltype(v.begin())>::value_type;
+    auto is_nested_container = Container<IterType>;
+
     std::string s;
     for (auto it = v.begin(); it != v.end(); ++it) {
-        s += _format(*it);
+        if (is_nested_container) {
+            s += std::format("\n  {}", _format(*it));
+        } else {
+            s += _format(*it);
+        }
         if (it != std::prev(v.end())) {
             s += ", ";
+        } else if (is_nested_container) {
+            s += "\n";
         }
     }
     return std::format("[{}]", s);
