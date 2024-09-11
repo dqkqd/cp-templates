@@ -17,6 +17,7 @@ add_executable(
   test_algos
   test_dsu.cpp
   test_fenwick_tree.cpp
+  test_hld.cpp
   test_lazy_segment_tree.cpp
   test_lazy_segment_tree_range.cpp
   test_modint.cpp
